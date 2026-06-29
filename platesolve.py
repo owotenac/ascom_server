@@ -121,7 +121,8 @@ def solve(expo: Exposure):
     if capture_result["status"] != "image_ready":
         return capture_result
 
-    fits_path = capture_result["fits_path"]
+    #fits_path = capture_result["fits_path"]
+    fits_path = r"C:/Git/astro_app/server_ascom/test.fits"
 
     scale_hint = None
     if C is not None and C.Connected:
@@ -171,7 +172,6 @@ def solve_status(sub: SubmissionId):
         job_status = _client.get_job_status(job_id)
 
     return {
-        "status": "ok",
         "submission_id": sub.submission_id,
         "job_id": job_id,
         "job_status": job_status  # 'pending', 'solving', 'success', 'failure'
