@@ -9,3 +9,4 @@ alpyca
 astropy
 numpy
 Pillow
+pyinstaller

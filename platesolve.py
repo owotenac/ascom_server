@@ -3,6 +3,7 @@ import json
 import requests
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from astropy.io import fits
 
 from camera import start_capture, Exposure, FOCAL_LENGTH, C
 
@@ -121,8 +122,7 @@ def solve(expo: Exposure):
     if capture_result["status"] != "image_ready":
         return capture_result
 
-    #fits_path = capture_result["fits_path"]
-    fits_path = r"C:/Git/astro_app/server_ascom/test.fits"
+    fits_path = capture_result["fits_path"]
 
     scale_hint = None
     if C is not None and C.Connected:
@@ -141,10 +141,25 @@ def solve(expo: Exposure):
             "message": "Failed to upload image to astrometry.net"
         }
 
+    # Convert FITS to PNG
+    with fits.open(fits_path) as hdul:
+        nda = hdul[0].data
+
+    # Handle RGB (3, H, W) or grayscale (H, W)
+    if nda.ndim == 3:
+        nda = np.transpose(nda, (1, 2, 0))  # (3, H, W) -> (H, W, 3)
+
+    img_normalized = ((nda - nda.min()) / (nda.max() - nda.min()) * 255).astype(np.uint8)
+    pil_img = Image.fromarray(img_normalized)
+    buffer = BytesIO()
+    pil_img.save(buffer, format="PNG")
+    img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
     return {
         "status": "submitted",
         "message": "Image submitted for plate solving",
-        "submission_id": submission_id
+        "submission_id": submission_id,
+        "image": f"data:image/png;base64,{img_base64}"
     }
 
 

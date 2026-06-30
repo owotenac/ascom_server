@@ -44,15 +44,14 @@ def disconnect_camera():
         C = None
         return {"status": "error", "message": str(e)}
 
+
 def state_camera():
     try:
         if C is None or not C.Connected:
             return {"status": "disconnected", "message": "Camera not connected"}
 
-        return {
-            "status": "connected",
-            "message": "Camera connected"
-        }
+        return {"status": "connected", "name": C.Name, "xsize": C.CameraXSize, "ysize": C.CameraYSize}
+
     except Exception as e:
         return {"status": "error", "message": str(e)}    
 

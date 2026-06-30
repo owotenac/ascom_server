@@ -1,2 +1,4 @@
 /__pycache__/*.pyc
 /.env
+/build/astro_app
+/web_dist
