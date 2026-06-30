@@ -6,18 +6,23 @@ echo  AstroApp Standalone Build
 echo ========================================
 
 REM Check if we're in the right directory
-if not exist "server_ascom\main.py" (
-    echo ERROR: Run this script from C:\Git\astro_app
+if not exist "main.py" (
+    echo ERROR: Run this script from C:\Git\astro_app\server_ascom\
     exit /b 1
 )
-
+REM Check if we have the astro_app in the parent folder
+if not exist "..\client\astro_app\package.json" (
+    echo ERROR: Missing astro_app folder in C:\Git\astro_app\
+    exit /b 1
+)
+set ASTRO_CLIENT=..\client\astro_app
 set ROOT_DIR=%CD%
 
 echo.
 echo [1/3] Building Expo web client...
 echo ----------------------------------------
-cd "%ROOT_DIR%\client\astro_app"
-call npx expo export --platform web --output-dir "%ROOT_DIR%\server_ascom\web_dist"
+cd %ASTRO_CLIENT%
+call npx expo export --platform web --output-dir "%ROOT_DIR%\web_dist"
 if errorlevel 1 (
     echo ERROR: Expo build failed
     exit /b 1
@@ -26,7 +31,7 @@ if errorlevel 1 (
 echo.
 echo [2/3] Activating Python virtual environment...
 echo ----------------------------------------
-cd "%ROOT_DIR%\server_ascom"
+cd %ROOT_DIR%
 
 REM Activate venv
 if exist ".venv\Scripts\activate.bat" (
@@ -67,7 +72,7 @@ if errorlevel 1 (
 echo.
 echo ========================================
 echo  Build complete!
-echo  Executable: %ROOT_DIR%\server_ascom\dist\astro_app.exe
+echo  Executable: %ROOT_DIR%\dist\astro_app.exe
 echo ========================================
 echo.
 echo To run: cd server_ascom ^& dist\astro_app.exe
