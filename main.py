@@ -41,9 +41,10 @@ app.add_api_route('/api/v1/camera/connect', connect_camera, methods=['GET'])
 app.add_api_route('/api/v1/camera/disconnect', disconnect_camera, methods=['GET'])
 app.add_api_route('/api/v1/camera/state', state_camera, methods=['GET'])
 app.add_api_route('/api/v1/camera/start_capture', start_capture, methods=['POST'])
-app.add_api_route('/api/v1/camera/solve', solve, methods=['POST'])
-app.add_api_route('/api/v1/camera/solve_status', solve_status, methods=['POST'])
-app.add_api_route('/api/v1/camera/solve_result', solve_result, methods=['POST'])
+
+app.add_api_route('/api/v1/platesolver/solve', solve, methods=['POST'])
+app.add_api_route('/api/v1/platesolver/solve_status', solve_status, methods=['POST'])
+app.add_api_route('/api/v1/platesolver/solve_result', solve_result, methods=['POST'])
 
 app.add_api_route('/api/v1/simu/solve', simu_solve, methods=['POST'])
 app.add_api_route('/api/v1/simu/solve_status', simu_solve_status, methods=['POST'])
