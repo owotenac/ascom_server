@@ -53,9 +53,6 @@ def format_messier(val):
         
 def convert_csv_to_panda(filename):
     df = pd.read_csv(filename, sep=';', dtype={'M': str})
-    #we remove the entries with low magnitude
-    df =df[(df['B-Mag'] != ' ')]
-    df =df[(df['B-Mag'] < mag_min)]
     #we remove the useless columns
     df = df[['Name','Type','RA','Dec','Const','B-Mag','V-Mag','J-Mag','H-Mag','K-Mag','MajAx', 'MinAx', 'Hubble','M','NGC','IC','Cstar Names','Identifiers','Common names']]
     #we convert the ra and dec to degrees
@@ -73,6 +70,8 @@ def convert_csv_to_panda(filename):
     
     # colonne unique 'magnitude' qui prend V_Mag, et si c'est nul, prend B_Mag
     df['magnitude'] = df['V_Mag'].fillna(df['B_Mag'])
+    #we remove the entries with low magnitude
+    df =df[(df['magnitude'] < mag_min)]
     # round
     df['magnitude'] = df['magnitude'].round(2)
     #format RA
@@ -80,7 +79,7 @@ def convert_csv_to_panda(filename):
     #format DEC
     df['Dec'] = df['Dec'].apply(formatDec)
 
-    print(df.head())
+    print(len(df.index))
     return df
 
 def extract_hip_number(catalog_id):
@@ -202,8 +201,6 @@ if __name__ == "__main__":
     if args.ngc:
         df = convert_csv_to_panda(args.ngc)
         df.to_json("data/ngc.json", orient="records", indent=4)
-        df = df[df['M'].notna()]
-        df.to_json("data/messier.json", orient="records", indent=4)
     elif args.stars:
         df = convert_dat_to_panda(args.stars)
         df.to_json("data/stars.json", orient="records", indent=4)
